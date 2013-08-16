@@ -7,7 +7,7 @@ Needed packages (Ubuntu): texlive-xetex texlive-latex-recommended texlive-latex-
   
 Usage for label:  
   
-Usage: ./bookcrossing-labels.pl <options>  
+Usage: ./bookcrossing-labels.pl [options]  
   
 Options:  
   -template template.tex (default: bookcrossing-template.tex, the string 'BCID-HERE' will be replaced by the bcid's given in the next file)  
