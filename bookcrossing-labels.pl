@@ -5,14 +5,15 @@ use Getopt::Long;
 
 my $usage = "Usage: $0 <options>
 Options:
-  -template template.tex (default: bookcrossing-template.tex, the string 'BCID-HERE' will be replaced by the bcid's given in the next file)
-  -bcid     bcids.txt    (required, list with BCID codes)
-  -print                 (set this flag if you want to print to the label printer)
+  -bcid     bcids.txt     (required, list with BCID codes)
+  -template template.tex  (optional, default: bookcrossing-template.tex)
+  -lprname  techinc-label (optional, name you gave to the printer, default: techinc-label)
+  -print                  (set this flag if you want to print to the label printer, no flag = only generate latex files)
 
 Required packages (Ubuntu): texlive-xetex texlive-latex-recommended texlive-latex-extra
 
 Creates bookcrossing labels from a template and a list with BCID codes. This can be send to a label printer.
-Example: $0 -bcid example-bcid.txt -print
+Example: $0 -bcid example-bcid.txt -lprname myprinter -print
 ";
 
 # Get options
@@ -20,12 +21,14 @@ my %opt;
 my $return = GetOptions (\%opt,
                          "template:s",
                          "bcid:s",
+                         "lprname",
                          "print"
 );
 
 # Check options
 die $usage if (! $opt{'bcid'});
 $opt{'template'} = "bookcrossing-template.tex" if (! $opt{'template'});
+$opt{'lprname'} = "techinc-label" if (! $opt{'lprname'});
 #$opt{'print'} = "yes" if ($opt{'print'});
 
 # Create temporary directory
@@ -100,7 +103,7 @@ sub print_label {
   execute("pdf2ps $dirname/$basename.pdf $dirname/$basename.ps");
 
   # print ps
-  #lpr -h $dirname/$basename.ps");
+  execute("lpr -P $opt{'lprname'} -h $dirname/$basename.ps");
 }
 
 sub execute {
