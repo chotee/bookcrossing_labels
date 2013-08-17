@@ -20,3 +20,9 @@ Generate and print book crossing labels for Technologia Incognita, using a latex
   
 Example: $0 -bcid example-bcid.txt -lprname myprinter -print
 
+Small labels
+------------
+small-labels.ps is a label with small TechInc icons. These can be used to stick on the cover of labelled books.
+
+print: lpr -P myprinter small-labels.ps
+
