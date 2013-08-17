@@ -7,7 +7,12 @@ my $usage = "Usage: $0 <options>
 Options:
   -template template.tex (default: bookcrossing-template.tex, the string 'BCID-HERE' will be replaced by the bcid's given in the next file)
   -bcid     bcids.txt    (required, list with BCID codes)
-  -print    no|yes       (no/yes, default: no)
+  -print                 (set this flag if you want to print to the label printer)
+
+Required packages (Ubuntu): texlive-xetex texlive-latex-recommended texlive-latex-extra
+
+Creates bookcrossing labels from a template and a list with BCID codes. This can be send to a label printer.
+Example: $0 -bcid example-bcid.txt -print
 ";
 
 # Get options
@@ -15,13 +20,19 @@ my %opt;
 my $return = GetOptions (\%opt,
                          "template:s",
                          "bcid:s",
-                         "print:s"
+                         "print"
 );
 
 # Check options
 die $usage if (! $opt{'bcid'});
 $opt{'template'} = "bookcrossing-template.tex" if (! $opt{'template'});
-$opt{'print'} = "no" if (! $opt{'print'});
+#$opt{'print'} = "yes" if ($opt{'print'});
+
+# Create temporary directory
+my $tmpdir = "tmp";
+unless(-d $tmpdir){
+    mkdir $tmpdir or die;
+}
 
 ### Do stuff ###
 
@@ -34,11 +45,15 @@ while (<FILE>) {
   next if m/^$/;    #skip empty lines
   s/\r?\n//;  # remove return and newline
 
+  # Store the template text in a new variable and replace all occurrences of BCID-HERE with the real bcid
   my $newlatex = $template;
-  $newlatex =~ s/BCID-HERE/$_/g;  # replace all occurrences of BCID-HERE with the real bcid
+  $newlatex =~ s/BCID-HERE/$_/g;
 
+  # Create a new latex file $tmpdir/$bcid.tex
   my $latexfile = generate_latex($_, $newlatex);
-  print_label($latexfile) if $opt{'print'} eq "yes";
+
+  # Convert tex to pdf to ps, and send it to the label printer
+  print_label($latexfile) if $opt{'print'};
 }
 close (FILE);
 
@@ -60,7 +75,7 @@ sub read_template {
 sub generate_latex {
   my $bcid = shift;
   my $latex = shift;
-  my $latexfile = "tmp/$bcid.tex";
+  my $latexfile = "$tmpdir/$bcid.tex";
 
   open (OUT, ">$latexfile") or die "cannot create file '$latexfile' : $!\n";
   print OUT $latex;
@@ -71,10 +86,28 @@ sub generate_latex {
 
 sub print_label {
   my $tex = shift;
+  my $dirname = `dirname $tex`;
+  $dirname =~ s/\r?\n//;
+  my $basename = `basename $tex .tex`;
+  $basename =~ s/\r?\n//;
+
   print "print label $tex: not implemented yet\n";
 
   # latex to pdf
+  execute("xelatex -output-directory=$dirname $tex");
+
   # pdf to ps
+  execute("pdf2ps $dirname/$basename.pdf $dirname/$basename.ps");
+
   # print ps
+  #lpr -h $dirname/$basename.ps");
+}
+
+sub execute {
+  my $syscall = shift;
+
+  print "SYSCALL: $syscall\n";
+  my $sysreturn = system ($syscall);
+  die "ERROR with syscall: $syscall\n$1\n" if $sysreturn>0;
 }
 
