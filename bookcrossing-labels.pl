@@ -94,8 +94,6 @@ sub print_label {
   my $basename = `basename $tex .tex`;
   $basename =~ s/\r?\n//;
 
-  print "print label $tex: not implemented yet\n";
-
   # latex to pdf
   execute("xelatex -output-directory=$dirname $tex");
 

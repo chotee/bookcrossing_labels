@@ -11,8 +11,8 @@ Options
 -------
   -template template.tex  (default: bookcrossing-template.tex, the string 'BCID-HERE' will be replaced by the bcid's given in the next file)  
   -bcid     bcids.txt     (required, list with BCID codes)  
-  -lprname  techinc-label (name you gave to the printer, default: techinc-label)
-  -print                  (set this flag if you want to print to the label printer)
+  -lprname  techinc-label (name you gave to the printer, default: techinc-label)  
+  -print                  (set this flag if you want to print to the label printer)  
 
 Description
 -----------
