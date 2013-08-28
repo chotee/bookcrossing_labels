@@ -18,11 +18,11 @@ Description
 -----------
 Generate and print book crossing labels for Technologia Incognita, using a latex template file and a list with BCID codes. This can be send to a label printer.
   
-Example: $0 -bcid example-bcid.txt -lprname myprinter -print
+Example: ./bookcrossing-labels.pl -bcid example-bcid.txt -lprname myprinter -print
 
 Small labels
 ------------
 small-labels.ps is a label with small TechInc icons. These can be used to stick on the cover of labelled books.
 
-print: lpr -P myprinter small-labels.ps
+print: lpr -P techinc-label small-labels-book.ps
 
